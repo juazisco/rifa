@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_rifa_rifa_manager,rifa.rifa,model_rifa_rifa,rifa_manager_group,1,1,1,1
+access_rifa_rifa,rifa.rifa,model_rifa_rifa,rifa_group,1,1,0,0

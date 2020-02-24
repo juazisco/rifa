@@ -1,0 +1,190 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+
+    <record model="ir.ui.view" id="rifa.list">
+      <field name="name">rifa list</field>
+      <field name="model">rifa.rifa</field>
+      <field name="arch" type="xml">         
+             
+        <tree>
+          <field name="ticket_number"/>
+          <field name="name"/>
+          <field name="state"/>
+        </tree>
+      </field>
+    </record>
+
+
+
+
+
+<record id="rifa_rifa_form" model="ir.ui.view">
+  <field name="name">rifa.rifa form view</field>
+  <field name="model">rifa.rifa</field>
+  <field name="arch" type="xml">
+  <form>
+    <header style="min-height:31px;">
+      <button name="button_reservado" string="Reservar" states="generado" type="object" class="oe_highlight" groups="base.group_user"/>
+      <button name="button_pagado" string="Pagar" states="reservado" type="object" class="oe_highlight" groups="base.group_user"/>
+                        
+      <field name="state" widget="statusbar" statusbar_visible="generado,reservado,pagado"/>
+    </header>
+    <sheet >
+      <group>                        
+        <group>
+          <h3><field name="ticket_number" style="width:200px;height:18px;font-size: 2.5em;"/></h3>
+        </group>
+        <group class="oe_right">
+           <button name="send_email" string="Enviar Correo" type="object" attrs="{'invisible':[('state', 'not in', ('reservado','pagado'))]}" class="oe_highlight" groups="base.group_user"/>
+        </group>
+
+      </group>
+      <group>
+        <group>
+          
+          <field name="description" nolabel="1" readonly="1" widget="html"/>          
+        </group>
+        <group>
+        <field name="name" string="Nombres"/>
+          <field name="email" string="Correo Electrónico"/>
+          <field name="telephone" string="Celular"/>
+          <field name="address" string="Dirección"/>     
+          <field name="cost" string="Costo (S/.)" readonly="1"/>
+        </group>
+      </group>
+    </sheet>
+    <div class="oe_chatter">
+    </div>  
+  </form>
+  </field>
+</record>
+
+<record id="kanban_view" model="ir.ui.view">
+    <field name="name">rifa.rifa.kanban.view</field>
+    <field name="model">rifa.rifa</field>
+    <field name="arch" type="xml">
+        <kanban class="o_kanban_small_column" create="false">
+            <field name="ticket_number"/>
+            <field name="name"/>
+            <field name="state"/>
+            <templates>
+                <t t-name="kanban-box">
+                     <t t-if="record.state.raw_value == 'generado'">
+                        <div style="background: greenyellow" t-attf-class=" oe_kanban_card oe_kanban_global_click">
+                            
+                            <div class="o_kanban_image">
+                                <img alt="Generado" src="/rifa/static/description/icon.png" class="o_kanban_image"/> 
+                            </div>
+
+                            <div class="o_kanban_record_top ">
+                                <div class="o_kanban_record_headings mt4">
+                                    <strong><field name="ticket_number" /></strong>
+                                </div>
+                                <strong>S/. <field name="cost" widget="monetary"/></strong>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="o_kanban_record_headings oe_kanban_bottom_left">
+                                    <span><t t-esc="record.name.value"/> </span>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <field name="state" widget="label_selection" options="{'classes': {'draft': 'default', 'cancel': 'default', 'done': 'success', 'approved': 'warning'}}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                    
+                    <t t-if="record.state.raw_value == 'reservado'">
+                        <div style="background: yellow" t-attf-class=" oe_kanban_card oe_kanban_global_click">
+                          <div class="o_kanban_image">
+                                <img alt="Reservado" src="/rifa/static/description/icon.png" class="o_kanban_image"/> 
+                            </div>
+                            <div class="card-text o_kanban_record_top mb16">
+                                <div class="o_kanban_record_headings mt4">
+                                  <strong><field name="ticket_number" /></strong>
+                                </div>
+                                <strong>S/. <field name="cost" widget="monetary"/></strong>
+                            </div>
+                          
+                            <div class="o_kanban_record_bottom">
+                                <div class="o_kanban_record_headings oe_kanban_bottom_left">
+                                    <span><t t-esc="record.name.value"/> </span>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <field name="state" widget="label_selection" options="{'classes': {'draft': 'default', 'cancel': 'default', 'done': 'success', 'approved': 'warning'}}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                    
+                    <t t-if="record.state.raw_value == 'pagado'">
+                        <div style="background: skyblue" t-attf-class=" oe_kanban_card oe_kanban_global_click">
+                       <div class="o_kanban_image">
+                                <img alt="Pagado" src="/rifa/static/description/icon.png" class="o_kanban_image"/> 
+                            </div>
+                            <div class="card-text o_kanban_record_top ">
+                                <div class="o_kanban_record_headings oe_kanban_bottom_left">
+                                    <strong><field name="ticket_number" /></strong>
+                                </div>
+                                <strong>S/. <field name="cost" widget="monetary"/></strong>
+                            </div>
+                             
+                            <div class="o_kanban_record_bottom">
+                                <div  class="o_kanban_record_headings oe_kanban_bottom_left">
+                                    <span><t t-esc="record.name.value"/> </span>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <field name="state" widget="label_selection" />
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </templates>
+        </kanban>
+    </field>
+</record>
+
+<record id="rifa_view_search" model="ir.ui.view">
+        <field name="name">rifa.rifa search view</field>
+        <field name="model">rifa.rifa</field>
+        <field name="arch" type="xml">
+            <search>
+              <field name="ticket_number"/>
+              <field name="name"/>
+              <filter string="No adquiridos" name="unattended_tickets" domain="[('state', '=', 'generado' )]" />
+          </search>
+        </field>
+    </record>
+  <record id="rifa_pivot" model="ir.ui.view">
+        <field name="name">rifa.rifa pivot view</field>
+        <field name="model">rifa.rifa</field>
+        <field name="arch" type="xml">
+            <pivot string="Analisis de Tickets">
+                <field name="write_uid" type="row"/>
+                <field name="state" type="col"/>
+            </pivot>
+        </field>
+    </record>
+    <!-- actions opening views on models -->
+
+    <record model="ir.actions.act_window" id="rifa.action_window">
+      <field name="name">Tickets de Rifa</field>
+      <field name="res_model">rifa.rifa</field>
+      <field name="view_mode">kanban,form,pivot</field>
+    </record>
+
+
+    <!-- Top menu item -->
+
+    <menuitem name="Gestor de Rifas" id="rifa.menu_root"  groups="rifa_group" web_icon="rifa,static/description/icon.png"/>
+   <!-- menu categories -->
+
+    <menuitem name="Opciones" id="rifa.menu_1" parent="rifa.menu_root"/>
+
+    <!-- actions -->
+
+    <menuitem name="Sortear" id="rifa.menu_1_list" parent="rifa.menu_1"
+              action="rifa.action_window"/>
+  </data>
+</odoo>
